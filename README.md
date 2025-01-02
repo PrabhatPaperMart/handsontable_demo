@@ -1,2 +1,2 @@
-# hansontable_demo
-POC: Handsontable demo repo for PPM ERP
+# handsontable_demo
+Proof of concept: Handsontable Demo repo for PPM ERP
