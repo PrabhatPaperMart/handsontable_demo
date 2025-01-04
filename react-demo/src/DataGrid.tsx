@@ -29,7 +29,7 @@ const DataGrid = () => {
         return;
       }
   
-      const newData = [rowData[0], rowData[1], rowData[3], rowData[4], rowData[6], rowData[7], rowData[8]];
+      const newData = [rowData[0], rowData[1], rowData[2], rowData[3], rowData[4], rowData[5], rowData[6], rowData[7], rowData[8]];
       grid2Data[coods[0]['startRow']] = newData;
   
       setGrid2Data([...grid2Data]);
@@ -94,7 +94,7 @@ const DataGrid = () => {
         data={grid2Data}
         height={450}
 				width={1150}
-        colWidths={[140, 192, 100, 90, 90, 110, 97, 100, 126]}
+        colWidths={[140, 192, 100, 90, 90, 110, 192]}
         colHeaders={[
           "Company name",
           "Name",
