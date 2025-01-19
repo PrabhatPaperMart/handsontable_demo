@@ -1,12 +1,16 @@
 const prisma = require('../models');
 
-exports.getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   const users = await prisma.user.findMany();
+  console.log("users is", users);
   res.json(users);
 };
 
-exports.createUser = async (req, res) => {
-  const { name, email } = req.body;
-  const newUser = await prisma.user.create({ data: { name, email } });
-  res.status(201).json(newUser);
+const createUser = async (req, res) => {
+  // No implementation
 };
+
+module.exports = {
+  getUsers,
+  createUser,
+}
