@@ -2,13 +2,14 @@ const prisma = require('../models');
 
 const handleUserSignup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     console.log("request is", req.body);
     const newUserDetails = await prisma.user.create(
     {
       data:
         {
-          name,
+          firstName,
+          lastName,
           email,
           password
         }
