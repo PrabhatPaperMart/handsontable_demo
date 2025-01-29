@@ -26,10 +26,11 @@ model User {
 
 // email-otp schema
 model verifyOtp {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  otp       String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  otp        String
+  isVerified Boolean  @default(false)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
