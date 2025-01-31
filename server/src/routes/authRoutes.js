@@ -10,8 +10,6 @@ router.post('/register', handleUserSignup);
 
 // All `login` endpoints
 router.post('/login', handleUserLogin);
-
-// All `password reset` endpoints
-router.post('/passwordReset', handlePasswordReset);
+router.post('/login/passwordReset', handlePasswordReset);
 
 module.exports = router;

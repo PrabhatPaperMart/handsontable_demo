@@ -80,9 +80,10 @@ const handleUserEmailSignup = async (req, res) => {
     // Send OTP via email
     await sendOTPEmail(email, otp)
 
+    // Return success response code 201 - Rsource Created
     res.status(200).json({ message: `OTP has been sent to ${email}` })
   } catch (error) {
-    // console.error("Full error:", error)
+    // Error code 500 - Server side error
     res.status(500).json({
       error: "Registration process failed",
       details: error.message
@@ -138,6 +139,7 @@ const handleEmailOtpVerification = async (req, res) => {
     return res.status(200).json({ message: "OTP verified successfully" });
 
   } catch (error) {
+    // Error code 500 - Server side error
     res.status(500).json({
       error: "OTP verification failed",
       details: error.message
@@ -173,6 +175,7 @@ const handleResendOtp = async (req, res) => {
 
     res.status(200).json({ message: `New OTP has been sent to ${email}` })
   } catch (error) {
+    // Error code 500 - Server side error
     res.status(500).json({
       error: "Failed to resend OTP",
       details: error.message 
@@ -198,10 +201,15 @@ const handleUserSignup = async (req, res) => {
           password: hashedPassword
         }
     });
+
+    // Return success response code 201 - Rsource Created
     res.status(201).json(newUserDetails);
+
   } catch (error) {
-    res.status(400).json({
-      error: "Either the email is already taken or the request is invalid."
+    // Error code 500 - Server side error
+    res.status(500).json({
+      error: "User registration failed.",
+      message: "Either the email is already taken or the request is invalid."
     });
   }
 };
@@ -242,7 +250,7 @@ const handleUserLogin = async (req, res) => {
     const { password: _, ...userWithoutPassword } = user;
     console.log("user is", user);
     console.log("user without password is", userWithoutPassword);
-    // Return success response
+    // Return success response code - 200
     return res.status(200).json({
       message: "Login successful",
       user: userWithoutPassword
@@ -250,6 +258,7 @@ const handleUserLogin = async (req, res) => {
 
   } catch (error) {
     console.error("Login error:", error);
+    // Error code 500 - Server side error
     return res.status(500).json({
       error: "Login failed",
       details: error.message
@@ -257,8 +266,50 @@ const handleUserLogin = async (req, res) => {
   }
 };
 
+// TODO: Implement the Password Reset function
+// For password reset:
+// 1. Check if the email exists - if not, return error "Email does not exist"
+// 2. If email exists, take the new password and update the password in the database
 const handlePasswordReset = async (req, res) => {
-  // TODO: Implement this function
+  try {
+    const { email, newPassword } = req.body;
+
+    // Check if user exists
+    const existingUser = await prisma.User.findUnique({
+      where: { email }
+    });
+
+    // If user not found, return error
+    if (!existingUser) {
+      return res.status(404).json({
+        error: "Email does not exist",
+        message: "No user found with the provided email address"
+      });
+    }
+
+    // Hash the new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password in the database
+    await prisma.User.update({
+      where: { email },
+      data: { 
+        password: hashedNewPassword 
+      }
+    });
+
+    // Send success response code - 204
+    res.status(204).json({
+      message: "Password reset successful"
+    });
+
+  } catch (error) {
+    // Error code 500 - Server side error
+    return res.status(500).json({
+      error: "Password reset failed",
+      details: error.message
+    });
+  }
 };
 
 module.exports = {
