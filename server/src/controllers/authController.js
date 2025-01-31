@@ -189,25 +189,20 @@ const handleUserSignup = async (req, res) => {
 
     // Hash the password before storing
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // console.log("request is", req.body);
-    const newUserDetails = await prisma.user.create(
-    {
+    const newUserDetails = await prisma.user.create({
       data:
         {
           firstName,
           lastName,
           email,
-          hashedPassword
+          password: hashedPassword
         }
     });
-      res.status(201).json(newUserDetails);
-    } catch (error) {
-      res.status(400).json(
-      {
-        error: "Either the email is already taken or the request is invalid."
-      }
-    );
+    res.status(201).json(newUserDetails);
+  } catch (error) {
+    res.status(400).json({
+      error: "Either the email is already taken or the request is invalid."
+    });
   }
 };
 
@@ -215,17 +210,51 @@ const handleUserSignup = async (req, res) => {
 // For login we only require email and password
 // If email is not found, return error
 // If password is incorrect, return error
-// If email and password are correct:
-// 1. Return success message
-// 2. Store firstName, lastName, email, crypted password in Users table
+// If email and password are correct: Return success message
 const handleUserLogin = async (req, res) => {
-  // TODO: Implement this function
   try {
     const { email, password } = req.body;
 
-  } catch (error) {
-  }
+    // Check if user exists in Users table
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
 
+    // If user not found
+    if (!user) {
+      return res.status(400).json({
+        error: "Login failed",
+        details: "Invalid email or password"
+      });
+    }
+
+    // Compare provided password with stored hash
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        error: "Login failed",
+        details: "Invalid email or password"
+      });
+    }
+
+    // Remove password from the handleUserLogin response
+    const { password: _, ...userWithoutPassword } = user;
+    console.log("user is", user);
+    console.log("user without password is", userWithoutPassword);
+    // Return success response
+    return res.status(200).json({
+      message: "Login successful",
+      user: userWithoutPassword
+    });
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({
+      error: "Login failed",
+      details: error.message
+    });
+  }
 };
 
 const handlePasswordReset = async (req, res) => {
