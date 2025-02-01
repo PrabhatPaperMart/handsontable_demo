@@ -5,7 +5,7 @@ const router = express.Router();
 // All `register` endpoints
 router.post('/register/verify/email', handleUserEmailSignup);
 router.post('/register/verify/emailOtp', handleEmailOtpVerification);
-router.post('/register/verify/resendOtp', handleResendOtp);
+router.post('/register/resendOtp', handleResendOtp);
 router.post('/register', handleUserSignup);
 
 // All `login` endpoints
